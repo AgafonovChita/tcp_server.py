@@ -7,3 +7,5 @@ Python TCP-server - test task
 <li>push button <b>"Start sending from TCP-client"</b></li>
 </ol>
 
+
+<img src="https://github.com/AgafonovChita/tcp_server.py/blob/master/data/screen.png" width="250" height="200" alt="ScreenServer" >
