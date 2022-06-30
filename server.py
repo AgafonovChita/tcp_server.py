@@ -1,18 +1,70 @@
-import socketserver
+import sys
+import json
+from PyQt6.QtCore import QFile
+from PyQt6.QtNetwork import QHostAddress, QTcpServer
+from PyQt6.QtWidgets import QTextBrowser, QWidget, QPushButton, QGridLayout, QApplication
 from engine_log import Logging
+from test_client import start_test
 
-class Server(socketserver.BaseRequestHandler):
-    def handle(self):
-        self.data = self.request.recv(1024).strip()
-        print(f"Новое соединение  {self.client_address[0]}")
-        log = Logging(bytes.decode(self.data))
-        log.parse()
-        log.print()
-        log.save_to_file()
-        self.request.sendall(str.encode("200 Ok"))
+HOST = '127.0.0.1'
+PORT = 9090
+COUNT_ATHLETE = 5
 
 
-if __name__ == "__main__":
-    HOST, PORT = "localhost", 9090
-    with socketserver.TCPServer((HOST, PORT), Server) as server:
-        server.serve_forever()
+class ServerWidget(QWidget):
+    def __init__(self):
+        super(ServerWidget, self).__init__()
+        self.resize(500, 450)
+        self.setWindowTitle('Server')
+
+        self.browser = QTextBrowser(self)
+        self.button = QPushButton(self)
+        self.button.setText('Start sending from TCP-client')
+        self.button.clicked.connect(self.start_testclient)
+
+        layout = QGridLayout()
+        layout.addWidget(self.browser, 0, 0)
+        layout.addWidget(self.button, 1, 0)
+        self.setLayout(layout)
+
+        self.localIP = HOST
+        self.host = PORT
+        self.initTcpServer()
+
+    def initTcpServer(self):
+        self.server = QTcpServer(self)
+        self.server.newConnection.connect(self.onNewConnection)
+        if not self.server.listen(QHostAddress(self.localIP), self.host):
+            self.browser.append('Ошибка инициализации сервера')
+
+    def onNewConnection(self):
+        conn = self.server.nextPendingConnection()
+        conn.readyRead.connect(lambda: self.onTcpServerReadyRead(conn))
+        conn.disconnected.connect(lambda: self.onDisconnected(conn))
+        print(f'Connected {conn.peerAddress()}:{conn.peerPort()}')
+
+    def onTcpServerReadyRead(self, conn):
+        bytesSize = conn.bytesAvailable()
+        bytesData = conn.read(bytesSize)
+        print(bytesData)
+        log = Logging(bytesData.decode('utf-8', 'ignore'))
+        log_text = log.parse()
+        if log_text:
+            self.browser.append(f"Cпортсмен, нагрудный номер {log_text.number_athlet} прошёл отсечку {log_text.channel_id} в «{log_text.time}»")
+            log.save_to_logfile()
+        else:
+            print(f"Невалидные данные {log_text}")
+
+    def onDisconnected(self, conn):
+        conn.close()
+        print(f'Disconnected {conn.peerAddress()}:{conn.peerPort()}')
+
+    def start_testclient(self):
+        start_test(COUNT_ATHLETE)
+
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    s = ServerWidget()
+    s.show()
+    app.exec()
