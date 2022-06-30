@@ -26,7 +26,7 @@ class Logging:
         self.data_list = self.data.split()
         try:
             self.log_data = Log(self.data_list[0], self.data_list[1],
-                                self.data_list[2][:self.data_list[2].index('.')],
+                                self.data_list[2][:self.data_list[2].index('.')+2],
                                 self.data_list[3][:2])
             return self.log_data
         except IndexError:
