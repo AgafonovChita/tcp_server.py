@@ -3,9 +3,10 @@ import random
 
 HOST, PORT = "127.0.0.1", 9090
 
+
 def get_data_random():
     """
-    Собираем тестовые данных
+    Собираем тестовые данные
 
     Формат данных BBBBxNNxHH:MM:SS.zhqxGGCR
     BBBB - номер участника, x - пробельный символ
