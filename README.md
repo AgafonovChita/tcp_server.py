@@ -8,4 +8,4 @@ Python TCP-server - test task
 </ol>
 
 
-<img src="https://github.com/AgafonovChita/tcp_server.py/blob/master/data/screen.png" width="250" height="200" alt="ScreenServer" >
+<img src="https://github.com/AgafonovChita/tcp_server.py/blob/master/data/screen.png" width="400" height="250" alt="ScreenServer" >
