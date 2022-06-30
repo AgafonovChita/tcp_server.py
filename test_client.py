@@ -5,7 +5,7 @@ HOST, PORT = "127.0.0.1", 9090
 
 def get_data_random():
     """
-    Генерируем тестовые данных
+    Собираем тестовые данных
 
     Формат данных BBBBxNNxHH:MM:SS.zhqxGGCR
     BBBB - номер участника, x - пробельный символ
@@ -23,7 +23,7 @@ def get_data_random():
 
 
 def send_mess():
-    """ Отправляем socker на TCP-server (host: '127.0.0.1', post: 9090) """
+    """ Отправляем сообщение на TCP-server (host: '127.0.0.1', post: 9090) """
     data = get_data_random()
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.connect((HOST, PORT))

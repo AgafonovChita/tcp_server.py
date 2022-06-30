@@ -10,3 +10,5 @@ __pycache__/
 # virtualenv
 venv/
 ENV/
+/log_server.log
+/log_games.txt
