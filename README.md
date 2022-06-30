@@ -1,4 +1,4 @@
-Python TCP-server - test task
+Python TCP-server (QTCPserver) - test task
 
 <ol>
 
