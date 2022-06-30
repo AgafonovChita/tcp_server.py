@@ -1,6 +1,4 @@
 import sys
-import json
-from PyQt6.QtCore import QFile
 from PyQt6.QtNetwork import QHostAddress, QTcpServer
 from PyQt6.QtWidgets import QTextBrowser, QWidget, QPushButton, QGridLayout, QApplication
 from engine_log import Logging
