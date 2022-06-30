@@ -29,8 +29,13 @@ def send_mess():
         sock.connect((HOST, PORT))
         sock.sendall(bytes(data, "utf-8"))
 
-def start_test(n: int):
-    for _ in range(n):
+
+def start_test(count_athlete: int = 10):
+    """
+    :param count_athlete: int -  количество атлетов зафиксированных на отсечках
+    :return:
+    """
+    for _ in range(count_athlete):
         send_mess()
 
 

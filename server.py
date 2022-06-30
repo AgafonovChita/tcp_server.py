@@ -26,16 +26,19 @@ logger.addHandler(file_handler)
 logger.addHandler(stdout_handler)
 
 
+
+
 class ServerWidget(QWidget):
     def __init__(self):
-        super(ServerWidget, self).__init__()
+        super().__init__()
+        self.server = None
         self.resize(500, 450)
         self.setWindowTitle('Server')
 
         self.browser = QTextBrowser(self)
         self.button = QPushButton(self)
         self.button.setText('Start sending from TCP-client')
-        self.button.clicked.connect(self.start_testclient)
+        self.button.clicked.connect(self.run_test)
 
         layout = QGridLayout()
         layout.addWidget(self.browser, 0, 0)
@@ -44,21 +47,21 @@ class ServerWidget(QWidget):
 
         self.localIP = HOST
         self.host = PORT
-        self.initTcpServer()
+        self.init_tcp_server()
 
-    def initTcpServer(self):
+    def init_tcp_server(self):
         self.server = QTcpServer(self)
-        self.server.newConnection.connect(self.onNewConnection)
+        self.server.newConnection.connect(self.on_new_connection)
         if not self.server.listen(QHostAddress(self.localIP), self.host):
             logger.info("Ошибка инициализации сервера")
 
-    def onNewConnection(self):
+    def on_new_connection(self):
         conn = self.server.nextPendingConnection()
-        conn.readyRead.connect(lambda: self.onTcpServerReadyRead(conn))
-        conn.disconnected.connect(lambda: self.onDisconnected(conn))
+        conn.readyRead.connect(lambda: self.on_tcp_server_ready_read(conn))
+        conn.disconnected.connect(lambda: self.on_disconnected(conn))
         logger.info(f'Connected {conn.peerAddress().toString()}:{conn.peerPort()}')
 
-    def onTcpServerReadyRead(self, conn):
+    def on_tcp_server_ready_read(self, conn):
         bytes_size = conn.bytesAvailable()
         bytes_data = conn.read(bytes_size)
         data = bytes_data.decode('utf-8', 'ignore')
@@ -66,21 +69,23 @@ class ServerWidget(QWidget):
         log = Logging(data)
         log.save_to_logfile(data)
 
-        log_text = log.parse()
+        log_data = log.parse()
 
-        if log_text:
-            if log_text.number_group == "00":
+        if log_data:
+            if log_data.number_group == "00":
                 self.browser.append(
-                    f"Cпортсмен, нагрудный номер {log_text.number_athlet} "
-                    f"прошёл отсечку {log_text.channel_id} в «{log_text.time}»")
+                    f"Cпортсмен, нагрудный номер {log_data.number_athlet} "
+                    f"прошёл отсечку {log_data.channel_id} в «{log_data.time}»")
         else:
-            logger.error(f"Невалидные данные {log_text}")
+            logger.error(f"Сервер получил не валидные данные {log_data}")
 
-    def onDisconnected(self, conn):
+    @staticmethod
+    def on_disconnected(conn):
         conn.close()
         logger.info(f'Disconnected {conn.peerAddress().toString()}:{conn.peerPort()}')
 
-    def start_testclient(self):
+    @staticmethod
+    def run_test():
         start_test(COUNT_ATHLETE)
 
 
