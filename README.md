@@ -1,8 +1,8 @@
 Python TCP-server
 
-1.git clone <code> https://github.com/AgafonovChita/tcp_server.py.git </code>
-<p>
-2.python server.py
-<p>
-3.python test_client.py
+<ol>
+<li> git clone <code> https://github.com/AgafonovChita/tcp_server.py.git </code> </li>
+<li>python server.py </li>
+<li>python test_client.py </li>
+</ol>
 
