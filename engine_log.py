@@ -11,22 +11,19 @@ class Log:
 class Logging:
     def __init__(self, data: str):
         self.data = data
+        self.data_list: list = None
         self.log: Log = None
 
     def parse(self):
-        self.data = self.data.split()
+        self.data_list = self.data.split()
         try:
-            self.log = Log(self.data[0], self.data[1], self.data[2][:self.data[2].index('.')], self.data[3][:2])
+            self.log = Log(self.data_list[0], self.data_list[1],
+                           self.data_list[2][:self.data_list[2].index('.')], self.data_list[3][:2])
             return self.log
         except IndexError:
             return False
 
-    def print(self):
-        if self.log.number_group == "00":
-            print(
-                f"Cпортсмен, нагрудный номер {self.log.number_athlet} прошёл отсечку {self.log.channel_id} в «{self.log.time}»")
+    def save_to_logfile(self, data: str):
+        with open("log_games.txt", "a") as log_file:
+            log_file.write(f"{data}\n")
 
-    def save_to_logfile(self):
-        with open("logfile.txt", "a") as log_file:
-            log_file.write(
-                f"Cпортсмен, нагрудный номер {self.log.number_athlet} прошёл отсечку {self.log.channel_id} в «{self.log.time}»\n")
